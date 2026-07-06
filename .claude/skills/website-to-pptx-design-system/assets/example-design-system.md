@@ -124,3 +124,16 @@ For a Northwind pitch/product deck, use: **Cover, Agenda, Section divider, Probl
 > **Components:** metric cards with big Cambria numbers; callout boxes (green-tint fill, dark-green text) instead of buttons; screenshots framed on white cards cropped to one feature; line icons in green-tint circles as the motif.
 > **Tone:** calm, confident, honest — declarative one-idea statements, no exclamation marks, no urgency.
 > **Never:** accent rule under titles, color bars or edge stripes, text-only slides, cream/beige backgrounds, the Aptos font, or spreading the yellow around.
+
+---
+
+## Calibration note: a dark-native brand runs the same method, inverted
+
+Northwind is light-native. A **dark-native** brand — say a developer tool with a near-black ground (`#0A0A0F`), a violet primary, a bright-green signal color, and a mono eyebrow font — runs the *identical* workflow but flips a few decisions, and the output must reflect that:
+
+- **Ground is the near-black; cards are a panel one step _lighter_** (e.g. `#14141C`), not white. Dividers can't "flip to dark" — there's no lighter ground to borrow — so use a distinct panel or a deeper black carrying the accent.
+- **Theme slots by role:** `bg1` holds the near-black ground and `tx1` the near-white ink. That's correct, not backwards.
+- **One-family type:** if the brand differentiates by weight (e.g. Geist 700/400) rather than a serif/sans split, map that one family to *both* Major and Minor; give the **mono/eyebrow** font its own manual role — it has no theme slot.
+- **Masters:** the *default* master is dark; the occasional light slide is the exception.
+
+Everything else — measured colors, `measured`/`approx` labels, a constrained component set, accent-as-punctuation — is unchanged. The method is base-mode-agnostic; only the surface logic flips.

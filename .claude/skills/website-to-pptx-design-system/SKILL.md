@@ -22,6 +22,8 @@ The most common failure mode is inventing hex values and font names. Don't. Get 
 **Preferred — run the extractor** (renders the site in a real browser and reads *computed* styles):
 
 ```bash
+# Run from the skill's own directory (the path is relative to it), or give the
+# script's absolute path. The target can be a URL or a local .html file.
 python scripts/extract_site.py https://theirsite.com \
   --pages https://theirsite.com/product https://theirsite.com/pricing \
   --out ./site-extract
@@ -38,6 +40,8 @@ Whatever the source, don't over-index on the homepage. If you have several pages
 ### 2. Separate brand DNA from web-only behavior
 
 Sort what you found into two buckets. This is the step that makes the output *slide-native* instead of a web screenshot.
+
+Decide the brand's **base mode** here too: is it **light-native** (dark text on a light ground) or **dark-native** (light text on a near-black ground)? Developer tools, observability, and many premium brands are dark-native. This one decision inverts the surface rhythm and the theme's background/text logic downstream — carry it into Sections 4, 6, and 11. Don't force a dark brand onto light slides (or vice versa); match the brand's own base.
 
 | Portable to slides (keep) | Web-only (adapt or drop) |
 |---|---|
@@ -77,7 +81,7 @@ The web-only behavior and how you're translating it for slides.
 ## 4. Color System
 A table — every row a usable slide color:
 | Token | Hex | Source | Best use | Misuse to avoid |
-Include at least: primary background, primary text, secondary text, brand primary, brand secondary, accent, muted surface, border. Add success/warning/error only if the brand uses them. Mark each hex `measured` or `approx` (see Evidence discipline).
+Include what the brand actually uses: primary background, primary text, secondary text, brand primary, accent, muted surface, border — plus brand secondary and success/warning/error **only if the brand has them**. Don't manufacture a color to fill a row; a two-hue brand has two hues, and inventing a third puts an off-brand color into every deck built from this system. Mark each hex `measured` or `approx` (see Evidence discipline).
 
 ## 5. Typography System
 Likely web fonts → PowerPoint-safe substitutes (from references/pptx-handoff.md). Define title, section header, body, caption, and data-label styles, each with a point-size range for: title slides, section dividers, standard content, dense slides, charts/tables. Prioritize readable presentation type over matching the site pixel-for-pixel.
@@ -89,7 +93,7 @@ Margins, grid, content width, alignment, spacing rhythm, whitespace level. When 
 Slide-native components translated from the web (see references/translation.md). For each: structure, visual treatment, best use, mistake to avoid.
 
 ## 8. Imagery, Icons, and Screenshots
-Image style and crop rules, product-screenshot treatment, illustration rules, icon style, background treatment. Name the register concretely (editorial / product-led / abstract / human / technical / premium / clinical).
+Image style and crop rules, product-screenshot treatment, illustration rules, icon style, background treatment. Name the register concretely (editorial / product-led / abstract / human / technical / premium / clinical). If the site shows no photography or product screenshots, derive the register from the rest of the brand and present this section as a recommendation, not an observation — and say so.
 
 ## 9. Chart and Data Rules
 Chart background, axis and gridline treatment, label style, how many colors per chart, highlight behavior, how data slides stay on-brand.

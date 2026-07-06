@@ -31,6 +31,8 @@ Substitution guide — match the brand's *category*, not its exact shape:
 
 **Pairing:** a safe-list serif header (Cambria / Bookman Old Style / Century Schoolbook) with a safe-list sans body (Calibri / Arial) gives real brand contrast at zero QA risk — usually the right move for a branded deck.
 
+**One-family and mono brands.** Some brands run a *single* family differentiated by weight (e.g. Geist 700 for headings, 400 for body), not a serif/sans pairing — then map that one family to *both* Major and Minor and let weight and size carry the hierarchy; don't bolt on a serif the brand never used. A **monospace or eyebrow font** (common on developer-tool sites for code, data readouts, and kickers) has no theme slot — a theme carries only Major + Minor — so apply it directly to those specific elements (map it to Courier New per the table) instead of forcing it into the theme.
+
 ## Type scale (render-safe presentation sizes)
 
 Web pixel sizes don't transfer — a 56px web hero is not a 56pt slide title. Land the design system's Section 5 ranges on these presentation-native sizes:
@@ -60,6 +62,8 @@ PowerPoint themes carry 12 color slots. Map your tokens onto them so the deck's 
 | Accent 3 | Accent color |
 | Accent 4–6 | Supporting tints / semantic (success, warning, error) if the brand uses them |
 | Hyperlink / Followed | Brand primary (or a dedicated link color) |
+
+**Map by role, not by the slot's name.** PowerPoint labels the first pair "Dark 1 / Light 1," but that's convention, not a rule: put your **ink** in the text slot (`tx1`) and your **ground** in the background slot (`bg1`) regardless of which is actually darker. For a **dark-native brand**, `bg1` legitimately holds a near-black and `tx1` a near-white — that's correct, not backwards. What matters is that each text slot stays paired with a background it contrasts against, so PowerPoint's automatic "light text on dark fill" logic keeps working. `dk2/lt2` then hold your secondary surfaces (for a dark brand, a panel one step *lighter* than the ground).
 
 Building from scratch with pptxgenjs, you set colors directly rather than editing theme XML — but keep this mapping in mind so a later "make it match our theme" is trivial, and so chart series pull from Accent 1→3 in a sensible order (dominant brand color first).
 

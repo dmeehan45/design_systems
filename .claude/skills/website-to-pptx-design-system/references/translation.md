@@ -18,7 +18,7 @@ For each: **structure · visual treatment · best use · mistake to avoid.**
 
 ### Section divider
 - **Structure:** big section number or label + section title on a distinct background.
-- **Treatment:** flip to the brand's dark surface (the one you found on the footer/CTA band) so dividers punctuate the deck rhythmically; display font, large.
+- **Treatment:** put dividers on the brand's *other* base surface so they punctuate the deck rhythmically — a **light-native** brand flips to its dark surface (the footer/CTA-band color); a **dark-native** brand has no lighter ground to borrow, so flip to a distinct panel (one step off the ground) or a deeper black carrying the accent. Display font, large.
 - **Best use:** between major parts of the argument.
 - **Avoid:** dividers that look identical to content slides — they should feel like a breath.
 
