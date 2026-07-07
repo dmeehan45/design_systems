@@ -12,6 +12,7 @@
     "build:product": "node build_deck.js product-recommendation",
     "build:strategy": "node build_deck.js strategy-review",
     "build:pitch": "node build_deck.js pitch",
+    "build:teton": "node build_deck.js teton",
     "preview": "node build_deck.js all --preview"
   },
   "engines": {

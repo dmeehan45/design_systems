@@ -15,6 +15,7 @@ const FLAVORS = {
   "product-recommendation": require("./flavors/product-recommendation"),
   "strategy-review": require("./flavors/strategy-review"),
   "pitch": require("./flavors/pitch"),
+  "teton": require("./flavors/teton"),
 };
 
 const BUILD = path.join(__dirname, "build");
@@ -24,7 +25,7 @@ const args = process.argv.slice(2);
 const preview = args.includes("--preview");
 const outIdx = args.indexOf("--out");
 const outOverride = outIdx > -1 ? args[outIdx + 1] : null;
-const positional = args.filter((a, i) => !a.startsWith("--") && i !== outIdx + 1);
+const positional = args.filter((a, i) => !a.startsWith("--") && (outIdx === -1 || i !== outIdx + 1));
 const names = (!positional[0] || positional[0] === "all") ? Object.keys(FLAVORS) : [positional[0]];
 
 for (const n of names) {

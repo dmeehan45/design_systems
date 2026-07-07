@@ -38,6 +38,9 @@ function makeKit(config) {
   const LN = (s, o) => s.it.push({ k: "line", ...o });
   const TX = (s, o) => s.it.push({ k: "text", ...o });
   const IM = (s, o) => s.it.push({ k: "image", ...o });
+  // Polyline through absolute inch points [[x,y],...] — for the sparse trend
+  // lines the design system allows (periwinkle, no gridlines, directly labeled).
+  const POLY = (s, o) => s.it.push({ k: "poly", ...o });
 
   function eyebrow(s, label, x, y, dot = PERI, tc = MUTED) {
     EL(s, { x, y: y + 0.03, w: 0.12, h: 0.12, fill: dot });
@@ -81,7 +84,7 @@ function makeKit(config) {
     TX(s, { x: x + w - 1.45, y, w: 1.15, h: 0.72, str: status, s: 12, b: true, c: col, al: "right", va: "middle" });
   }
 
-  return { ...T, config, cloud: config.cloud, deck, slide, R, RR, EL, LN, TX, IM,
+  return { ...T, config, cloud: config.cloud, deck, slide, R, RR, EL, LN, TX, IM, POLY,
     eyebrow, twoTone, hairline, footer, statBlock, pill, photo, wordmark, statusRow };
 }
 
@@ -106,6 +109,13 @@ function renderPptx(deck, out, meta = {}) {
         g.addShape("ellipse", opt);
       } else if (o.k === "line") {
         g.addShape("line", { x: o.x, y: o.y, w: o.w, h: o.h, line: { color: o.c, width: o.wt } });
+      } else if (o.k === "poly") {
+        for (let i = 0; i < o.pts.length - 1; i++) {
+          const [x1, y1] = o.pts[i], [x2, y2] = o.pts[i + 1];
+          const dx = x2 - x1, dy = y2 - y1;
+          g.addShape("line", { x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(dx), h: Math.abs(dy),
+            line: { color: o.c, width: o.wt }, flipV: (dx < 0) !== (dy < 0) });
+        }
       } else if (o.k === "image") {
         g.addImage({ path: o.path, x: o.x, y: o.y, w: o.w, h: o.h, altText: o.alt || "" });
       } else if (o.k === "text") {
@@ -141,6 +151,9 @@ function renderHtml(deck, htmlPath) {
         inner += `<div style="position:absolute;left:${L}px;top:${Tp}px;width:${W}px;height:${H}px;background:#${o.fill};border-radius:50%;${bd}box-sizing:border-box"></div>`;
       } else if (o.k === "line") {
         inner += `<div style="position:absolute;left:${L}px;top:${Tp}px;width:${W || o.wt}px;height:${H || Math.max(1, o.wt)}px;background:#${o.c}"></div>`;
+      } else if (o.k === "poly") {
+        const pts = o.pts.map(([x, y]) => `${(x * PX).toFixed(1)},${(y * PX).toFixed(1)}`).join(" ");
+        inner += `<svg style="position:absolute;left:0;top:0;width:${sw}px;height:${sh}px;overflow:visible" viewBox="0 0 ${sw} ${sh}"><polyline points="${pts}" fill="none" stroke="#${o.c}" stroke-width="${(o.wt * 1.33).toFixed(2)}" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
       } else if (o.k === "image") {
         inner += `<img src="file://${o.path}" style="position:absolute;left:${L}px;top:${Tp}px;width:${W}px;height:${H}px;object-fit:contain"/>`;
       } else if (o.k === "text") {
