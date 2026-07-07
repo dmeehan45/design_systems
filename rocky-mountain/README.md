@@ -31,6 +31,19 @@ node build_deck.js strategy-review --out review.pptx
 Requires Node 18+. `sharp` is only used to rasterize the abstract particle-field
 hero image; everything else is pptxgenjs.
 
+## Standalone slides
+
+One-off slides that aren't part of a flavor deck live as small scripts beside
+`build_deck.js` and reuse the same `lib/kit.js` tokens and helpers:
+
+| Script | Output | What it is |
+|---|---|---|
+| `closing-slide.js` | `closing-slide.pptx` | A redesigned six-month-plan **closing slide**, built as a closing argument: header row, a three-step plan beside a dark **North Star** anchor (`Week 2, not Week 12` is the single biggest phrase), then a success ladder and a renewal-story payoff card. |
+
+```bash
+node closing-slide.js     # writes closing-slide.pptx (+ build/closing-slide.preview.html)
+```
+
 ## Structure
 
 ```
