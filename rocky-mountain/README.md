@@ -38,7 +38,7 @@ One-off slides that aren't part of a flavor deck live as small scripts beside
 
 | Script | Output | What it is |
 |---|---|---|
-| `closing-slide.js` | `closing-slide.pptx` | A redesigned six-month-plan **closing slide**, built as a closing argument: header row, a three-step plan beside a dark **North Star** anchor (`Week 2, not Week 12` is the single biggest phrase), then a success ladder and a renewal-story payoff card. |
+| `closing-slide.js` | `closing-slide.pptx` | A redesigned six-month-plan **closing slide**, built as a simple two-column close: the plan as a vertical **timeline** on the left; on the right, a dark **North Star** anchor (`Week 2, not Week 12` is the single biggest phrase), how it shows up in the operational cycle (`Reviewed → Acted on → Earlier`), and a renewal-story payoff card. |
 
 ```bash
 node closing-slide.js     # writes closing-slide.pptx (+ build/closing-slide.preview.html)

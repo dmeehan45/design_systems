@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 // Rocky Mountain — standalone builder for the redesigned Teton closing slide.
 //
-// Rebuilds the six-month-plan closing slide as a single, on-system slide that
-// reads like a closing argument rather than an operating document:
+// A deliberately simple two-column close:
 //
-//   Row 1  Header            — eyebrow + title + one-line subtitle (~15% height)
-//   Row 2  Main story        — 3-step plan (left) + a dark North Star anchor (right)
-//   Row 3  Outcome           — 3-card success ladder (left) + renewal-story card (right)
+//   Header (full width)   — eyebrow + title + one-line subtitle
+//   Left  column          — the six-month plan, as a vertical timeline
+//   Right column (stack)  — the North Star anchor, then how it shows up in the
+//                           operational cycle, then the renewal-story payoff
 //
-// The North Star is the visual anchor: a dark rounded panel (an on-system
-// component) whose "Week 2, not Week 12" is the single largest phrase on the
-// slide. Copy is deliberately short — the presenter speaks the rest.
+// The North Star is the visual anchor (a dark rounded panel whose
+// "Week 2, not Week 12" is the single largest phrase). Copy is kept short —
+// the presenter speaks the rest.
 //
 //   node closing-slide.js            # writes closing-slide.pptx (+ build/ preview)
 //
@@ -20,21 +20,22 @@ const fs = require("fs");
 const { makeKit, renderPptx, renderHtml } = require("./lib/kit");
 
 const K = makeKit({ brand: "Teton", footer: "Teton  ·  Product recommendation" });
-const { slide, RR, EL, TX, eyebrow, footer,
-  INK, MUTED, GROUND, DARK, PERI, MINT, LAV, BORDER, LGRAY, MUTED_D, MX } = K;
+const { slide, RR, EL, LN, TX, eyebrow, footer,
+  INK, MUTED, GROUND, DARK, PERI, MINT, LAV, MX } = K;
 
-// ---- Column grid (two columns, aligned top and bottom rows) ----
-const LX = MX,        LW = 6.20;              // left column  (plan / ladder)
-const RX = 7.33,      RW = 5.15;              // right column (North Star / renewal)
-const RIGHT = RX + RW;                        // 12.48, content right edge
+// ---- Two-column grid ----
+const LX = MX;                 // left column (vertical timeline)
+const TXX = LX + 0.80, TXW = 4.20;             // timeline text block
+const RX = 6.35, RW = 6.13;    // right column (North Star / cycle / renewal)
 
 const s = slide(GROUND);
 s.notes =
-  "Closing slide, rebuilt as a closing argument. Reading path: title → North Star (dark anchor) " +
-  "→ success ladder → renewal story. North Star 'Week 2, not Week 12' is the single biggest phrase. " +
-  "All figures are illustrative — replace N / M and specifics with real pilot numbers.";
+  "Closing slide. Two-column read: LEFT is the six-month plan as a vertical timeline; " +
+  "RIGHT is the payoff, stacked — the North Star anchor, how it shows up in the operational " +
+  "cycle (Reviewed -> Acted on -> Earlier), and the renewal story. 'Week 2, not Week 12' is the " +
+  "single biggest phrase. All figures are illustrative — replace specifics with real pilot numbers.";
 
-// ============================================================ ROW 1 — HEADER
+// ============================================================ HEADER (full width)
 eyebrow(s, "Six-month plan", LX, 0.52, PERI, MUTED);
 TX(s, { x: LX, y: 0.86, w: 11.7, h: 0.6, str: "Six months to prove earlier reviewed action",
   s: 28, b: true, c: INK, ls: 1.0 });
@@ -42,65 +43,62 @@ TX(s, { x: LX, y: 1.45, w: 11.3, h: 0.4,
   str: "Validate on history, pilot by hand, then automate only what changes care behavior.",
   s: 14, c: "5F5F5F", ls: 1.05 });
 
-// ============================================ ROW 2 — PLAN (left) + NORTH STAR (right)
-const MY = 1.98, MH = 2.80;                   // middle row band
-// ---- Left: three stacked, numbered step cards ----
-const STEPS = [
+// ============================================================ LEFT — vertical timeline
+const NODES = [
   ["1", "Months 1–2", "Prove the signal",   "Replay known care changes against Teton history."],
   ["2", "Months 2–4", "Prove the workflow", "Run weekly candidates by hand with 1–2 partners."],
-  ["3", "Months 4–6", "Automate the loop",  "Launch generation, review, and documentation."],
+  ["3", "Months 4–6", "Automate the loop",  "Launch candidate generation, review, and documentation."],
 ];
-const CGAP = 0.13, CH = (MH - CGAP * 2) / 3;  // card height
-STEPS.forEach(([n, when, head, desc], i) => {
-  const y = MY + i * (CH + CGAP);
-  RR(s, { x: LX, y, w: LW, h: CH, rad: 0.12, fill: LGRAY, line: { c: BORDER, w: 1 } });
-  // number badge
-  const bd = 0.48, by = y + (CH - bd) / 2;
-  EL(s, { x: LX + 0.24, y: by, w: bd, h: bd, fill: INK });
-  TX(s, { x: LX + 0.24, y: by, w: bd, h: bd, str: n, s: 17, b: true, c: "FFFFFF", al: "center", va: "middle" });
-  // text block
-  const tx = LX + 0.95;
-  TX(s, { x: tx, y: y + 0.13, w: 4.2, h: 0.22, str: when.toUpperCase(), s: 9, b: true, c: MUTED, cs: 1.5 });
-  TX(s, { x: tx, y: y + 0.32, w: 4.4, h: 0.3, str: head, s: 15.5, b: true, c: INK });
-  TX(s, { x: tx, y: y + 0.60, w: 4.45, h: 0.24, str: desc, s: 11, c: MUTED });
+const NY = [2.20, 3.95, 5.70];                 // node top positions (span the column)
+const DOTD = 0.44, DOTX = LX + 0.03;
+const dotCy = (y) => y + 0.11 + DOTD / 2;      // dot center, aligned to the heading line
+// connector line (drawn first, dots sit on top)
+LN(s, { x: DOTX + DOTD / 2, y: dotCy(NY[0]), w: 0, h: dotCy(NY[2]) - dotCy(NY[0]), c: "D9DCEA", wt: 1.5 });
+NODES.forEach(([n, when, head, desc], i) => {
+  const y = NY[i];
+  TX(s, { x: TXX, y, w: TXW, h: 0.22, str: when.toUpperCase(), s: 9.5, b: true, c: PERI, cs: 1.5 });
+  TX(s, { x: TXX, y: y + 0.20, w: TXW, h: 0.3, str: head, s: 16, b: true, c: INK });
+  TX(s, { x: TXX, y: y + 0.52, w: TXW, h: 0.5, str: desc, s: 11.5, c: MUTED, ls: 1.1 });
+  EL(s, { x: DOTX, y: y + 0.11, w: DOTD, h: DOTD, fill: PERI });
+  TX(s, { x: DOTX, y: y + 0.11, w: DOTD, h: DOTD, str: n, s: 13, b: true, c: "FFFFFF", al: "center", va: "middle" });
 });
 
-// ---- Right: the North Star — dark anchor panel ----
-RR(s, { x: RX, y: MY, w: RW, h: MH, rad: 0.14, fill: DARK, shadow: true });
-const nx = RX + 0.42;
-eyebrow(s, "North Star", nx, MY + 0.34, MINT, MUTED_D);
-TX(s, { x: nx, y: MY + 0.72, w: RW - 0.84, h: 0.9,
-  str: "Median weeks earlier that meaningful decline is reviewed",
-  s: 15, c: "FFFFFF", ls: 1.08 });
-TX(s, { x: nx, y: MY + 1.62, w: RW - 0.84, h: 0.62, str: "Week 2,", s: 38, b: true, c: PERI });
-TX(s, { x: nx, y: MY + 2.22, w: RW - 0.84, h: 0.5, str: "not Week 12.", s: 27, b: true, c: MUTED_D });
+// ============================================================ RIGHT — North Star anchor
+const NSY = 2.10, NSH = 2.25;
+RR(s, { x: RX, y: NSY, w: RW, h: NSH, rad: 0.14, fill: DARK, shadow: true });
+const nx = RX + 0.42, nw = RW - 0.84;
+eyebrow(s, "North Star", nx, NSY + 0.30, MINT, "A8ABB5");
+TX(s, { x: nx, y: NSY + 0.68, w: nw, h: 0.34, str: "How early we catch meaningful decline",
+  s: 16, c: "FFFFFF", ls: 1.04 });
+TX(s, { x: nx, y: NSY + 1.10, w: nw, h: 0.62, str: "Week 2,", s: 34, b: true, c: PERI });
+TX(s, { x: nx, y: NSY + 1.74, w: nw, h: 0.5, str: "not Week 12.", s: 24, b: true, c: "A8ABB5" });
 
-// ============================================ ROW 3 — LADDER (left) + RENEWAL (right)
-const BY = 4.96, BH = 1.72;                   // bottom row band
-// ---- Left: success ladder, three mini-cards ----
-const LADDER = [
-  ["Reviewed", "Resolved in cadence and confirmed meaningful.", INK],
-  ["Acted on", "Monitoring, intervention, or reassessment started.", INK],
-  ["Earlier",  "Decline reviewed sooner, with fewer delayed reassessments.", PERI],
+// ============================================================ RIGHT — operational cycle
+const CY = NSY + NSH + 0.16;                    // 4.51
+eyebrow(s, "In the operational cycle", RX, CY, PERI, MUTED);
+const STEPS = [
+  [RX,          "Reviewed", "resolved in cadence", INK],
+  [RX + 2.10,   "Acted on", "intervention started", INK],
+  [RX + 4.20,   "Earlier",  "with fewer delays",    PERI],
 ];
-const LGAP = 0.16, LCW = (LW - LGAP * 2) / 3;
-LADDER.forEach(([head, desc, hc], i) => {
-  const x = LX + i * (LCW + LGAP);
-  RR(s, { x, y: BY, w: LCW, h: BH, rad: 0.12, fill: LGRAY, line: { c: BORDER, w: 1 } });
-  TX(s, { x: x + 0.24, y: BY + 0.28, w: LCW - 0.44, h: 0.3, str: head, s: 14.5, b: true, c: hc });
-  TX(s, { x: x + 0.24, y: BY + 0.66, w: LCW - 0.44, h: 0.9, str: desc, s: 10.5, c: MUTED, ls: 1.1 });
+const fhy = CY + 0.36;
+STEPS.forEach(([x, head, cap, hc], i) => {
+  TX(s, { x, y: fhy, w: 1.85, h: 0.28, str: head, s: 13.5, b: true, c: hc });
+  TX(s, { x, y: fhy + 0.26, w: 1.9, h: 0.22, str: cap, s: 9.5, c: MUTED });
+  if (i < STEPS.length - 1) TX(s, { x: x + 1.75, y: fhy, w: 0.35, h: 0.28, str: "→", s: 15, c: "AFAFB6", al: "center", va: "middle" });
 });
 
-// ---- Right: renewal story — the payoff ----
-RR(s, { x: RX, y: BY, w: RW, h: BH, rad: 0.14, fill: LAV, shadow: true });
-eyebrow(s, "Renewal story", RX + 0.35, BY + 0.28, PERI, "4A4458");
-TX(s, { x: RX + 0.35, y: BY + 0.66, w: RW - 0.7, h: 1.0, s: 14.5, ls: 1.16, c: "37373C", runs: [
+// ============================================================ RIGHT — renewal story (payoff)
+const RENY = 5.60, RENH = 1.02;
+RR(s, { x: RX, y: RENY, w: RW, h: RENH, rad: 0.14, fill: LAV, shadow: true });
+eyebrow(s, "Renewal story", RX + 0.34, RENY + 0.20, PERI, "4A4458");
+TX(s, { x: RX + 0.34, y: RENY + 0.50, w: RW - 0.68, h: 0.5, s: 13, ls: 1.14, c: "37373C", runs: [
   { t: "By renewal, Teton can show " },
-  { t: "earlier resident identification", c: INK, b: true },
+  { t: "earlier identification", c: INK, b: true },
   { t: ", " },
   { t: "documented reassessments", c: INK, b: true },
-  { t: ", and a " },
-  { t: "care-quality ROI story beyond falls", c: INK, b: true },
+  { t: ", and an " },
+  { t: "ROI story beyond falls", c: INK, b: true },
   { t: "." },
 ] });
 
