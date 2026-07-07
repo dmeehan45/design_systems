@@ -114,17 +114,16 @@ Prefer the **giant number over the chart** — most "data" here is one figure + 
 
 ## 10. Reproducing decks
 
-The system is executable. `rocky-mountain/build_deck.js` builds a 12-slide `.pptx` from a single slide-spec, so future decks stay consistent:
+The system is executable. `rocky-mountain/` holds a generator that builds decks from a single slide-spec, so future decks stay consistent. It ships three flavors — **product-recommendation**, **strategy-review**, and **pitch** — that share one design kit:
 
 ```bash
 cd rocky-mountain
-npm install pptxgenjs sharp
-node build_deck.js                # → product-recommendation-template.pptx
-node build_deck.js --preview      # also writes build/preview.html for visual QA
-node build_deck.js --out my.pptx  # custom output path
+npm install
+npm run build                       # build all three flavors
+node build_deck.js pitch --preview  # one flavor + an HTML preview for QA
 ```
 
-Edit the slide definitions (or the `DECK` / `BRAND` constants and the content arrays) to make a new deck; the tokens, components, and layout come from this spec. See `rocky-mountain/README.md`.
+Each flavor is a file in `flavors/`; edit its content, or copy one to add a new flavor. The tokens, components, and renderers live in `lib/kit.js` and come from this spec. See `rocky-mountain/README.md`.
 
 ## 11. Reusable deck prompt
 

@@ -1,0 +1,24 @@
+{
+  "name": "rocky-mountain-decks",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Rocky Mountain design system — reproducible, on-brand PowerPoint deck templates.",
+  "type": "commonjs",
+  "bin": {
+    "rm-decks": "build_deck.js"
+  },
+  "scripts": {
+    "build": "node build_deck.js all",
+    "build:product": "node build_deck.js product-recommendation",
+    "build:strategy": "node build_deck.js strategy-review",
+    "build:pitch": "node build_deck.js pitch",
+    "preview": "node build_deck.js all --preview"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1",
+    "sharp": "^0.35.3"
+  }
+}

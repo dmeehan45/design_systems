@@ -1,44 +1,67 @@
 # Rocky Mountain — deck generator
 
-Reproducible generator for **Rocky Mountain**-styled PowerPoint decks. It builds a
-12-slide product-recommendation `.pptx` from a single slide-spec, so every deck
-stays consistent with the design system.
+Reproducible generator for **Rocky Mountain**-styled PowerPoint decks. One shared
+design kit drives several deck *flavors*, so every deck stays consistent with the
+design system. All sample content is fictional and non-confidential.
 
 - Design system spec: [`../rocky-mountain-design-system.md`](../rocky-mountain-design-system.md)
-- Sample output: `product-recommendation-template.pptx`
+
+## Flavors
+
+| Flavor | Slides | Sample subject | Output |
+|---|---|---|---|
+| `product-recommendation` | 12 | "Project Summit" — recommend building a product | `product-recommendation-template.pptx` |
+| `strategy-review` | 11 | "Q3 Strategy Review" — a quarterly business review | `strategy-review-template.pptx` |
+| `pitch` | 11 | "Northpeak" — an investor/sales pitch (swapped brand) | `pitch-template.pptx` |
 
 ## Build
 
 ```bash
-npm install pptxgenjs sharp
-node build_deck.js                 # → product-recommendation-template.pptx
-node build_deck.js --preview       # also writes build/preview.html (open in a browser to QA)
-node build_deck.js --out deck.pptx # custom output path
+npm install                 # installs pptxgenjs + sharp
+npm run build               # build all three flavors
+npm run build:pitch         # build one (also :product, :strategy)
+npm run preview             # build all + build/<flavor>.preview.html for visual QA
+
+# or directly:
+node build_deck.js                        # all flavors
+node build_deck.js pitch --preview        # one flavor + HTML preview
+node build_deck.js strategy-review --out review.pptx
 ```
 
 Requires Node 18+. `sharp` is only used to rasterize the abstract particle-field
 hero image; everything else is pptxgenjs.
 
-## Make it your own
+## Structure
 
-Everything is sample content — nothing here is confidential.
+```
+build_deck.js        CLI: selects flavor(s), renders .pptx (+ optional HTML preview)
+lib/kit.js           design tokens, drawing/builder helpers, and both renderers
+flavors/*.js         one file per flavor — the slide content, built with the kit
+build/               regenerable artifacts (hero PNG, HTML previews) — git-ignored
+*-template.pptx      built outputs
+```
 
-- Swap the wordmark and sample subject: edit the `BRAND` and `DECK` constants near the top of `build_deck.js`.
-- Change content: each slide is defined in the `BUILD THE 12 SLIDES` section using small helpers (`twoTone`, `statBlock`, `eyebrow`, `photo`, `pill`, …). Edit the strings/arrays in place.
-- Colors and type come from the token constants at the top — they match the design system; change them there if you fork the palette.
-- Image slots render as labeled placeholders; drop in real photos by replacing the `photo(...)` calls with `IM(s, { x, y, w, h, path })`.
+## Customize
 
-## How QA works here
+Everything is sample content — swap it freely.
 
-LibreOffice-based rendering isn't assumed. `--preview` emits an HTML facsimile of
-the deck (driven by the same slide-spec) that you can screenshot or open in a
-browser to check layout, spacing, and overlap before sending the `.pptx`. The
-authoritative file is always the `.pptx`.
+- **Edit a flavor:** open `flavors/<name>.js`. Change the `brand`, `footer`, and
+  the strings/arrays in `build(K)`. Helpers on `K` (`twoTone`, `statBlock`,
+  `eyebrow`, `photo`, `pill`, `statusRow`, …) match the design system; tokens are
+  `K.INK`, `K.PERI`, etc.
+- **Swap in real images:** replace a `photo(...)` placeholder with
+  `IM(s, { x, y, w, h, path: "/abs/path.png" })`.
+- **Add a new flavor:** copy a file in `flavors/`, export
+  `{ name, file, brand, footer, title, usesCloud, build(K) }`, and register it in
+  the `FLAVORS` map at the top of `build_deck.js`.
 
-## Notes
+## QA
 
-- Fonts: the deck specifies **Calibri**, which ships with Microsoft Office and
-  renders true-to-width there. A preview environment without Calibri will
-  substitute a fallback sans — fine for layout QA, exact letter shapes will differ.
-- `build/` holds regenerable artifacts (the hero PNG, the HTML preview) and is
-  git-ignored.
+LibreOffice rendering isn't assumed. `--preview` emits an HTML facsimile of each
+deck (driven by the same slide-spec) that you can open in a browser or screenshot
+to check layout, spacing, and overlap before sending. The authoritative file is
+always the `.pptx`.
+
+**Fonts:** decks specify **Calibri**, which ships with Microsoft Office and renders
+true-to-width there. A preview environment without Calibri substitutes a fallback
+sans — fine for layout QA; exact letter shapes will differ.
